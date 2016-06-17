@@ -1,69 +1,57 @@
 <!DOCTYPE html>
-<html>
-  <head>
-    <meta charset="utf-8">
-    <title>Welcome to Firebase Hosting</title>
-    <style media="screen">
-      body {
-        font-family: Roboto, Arial, sans-serif;
-        background: #ECEFF1;
-        color: rgba(0,0,0,0.87);
-      }
+<!-- saved from url=(0035)http://192.168.16.17:8051/firebase/ -->
+<html><head><meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+	
+	<title>FireBase</title>
+    <script src="https://cdn.firebase.com/js/client/2.4.2/firebase.js"></script>
+</head>
 
-      a {
-        color: rgb(3,155,229);
-      }
+<body>
 
-      #message {
-        max-width: 400px;
-        margin: 40px auto;
-        box-shadow: 0 1px 3px 0 rgba(0,0,0,0.2),0 1px 1px 0 rgba(0,0,0,0.14),0 2px 1px -1px rgba(0,0,0,0.12);
-        border-radius: 2px;
-        background: white;
-        padding: 16px 24px;
-      }
+	<canvas id="myCanvas" width="1920" height="955">
+</canvas>
+    
+    </body></html>
 
-      #message h1 {
-        font-size: 22px;
-        font-weight: 500;
-        text-align: center;
-        margin: 0 0 16px;
-      }
 
-      #message p {
-        font-weight: 300;
-        line-height: 150%;
-      }
+<script>
+    var canvas=document.getElementById('myCanvas');
+    var context= canvas.getContext('2d');
+    context.canvas.width= window.innerWidth;
+    context.canvas.height=window.innerHeight;
+    context.fillStyle = '#dddddd';
+    context.fillRect(0,0,context.canvas.width,context.canvas.height);
+    
+    var ref= new Firebase("https://canvasfb2016.firebaseio.com/puntos");
+    
+    function colorAleatorio(){
+    return 'rgb(' + (Math.floor(Math.random() * 256)) + ',' +   (Math.floor(Math.random() * 256)) + ','+(Math.floor(Math.random() * 256)) + ')';
+    }
+    
+    canvas.addEventListener("click",function(evento){
+        var x= evento.pageX,
+            y = evento.pageY,
+            color=colorAleatorio();
+        
+        ref.push({
+            x:x,
+            y:y,
+            color:color
+        });
+    });
+    
+    function dibujarCirculo(context,x,y,color){
+        context.fillStyle=color;
+        context.beginPath();
+        context.arc(x,y,4,0,Math.PI*2,false);
+        context.fill();
+    }
+    
+    
+    
+    ref.on('child_added',function(snapshot){
+        var punto=snapshot.val();
+        dibujarCirculo(context,punto.x,punto.y,punto.color);
+    })
 
-      #message ul {
-        list-style: none;
-        margin: 16px 0 0;
-        padding: 0;
-        text-align: center;
-      }
-
-      #message li a {
-        display: inline-block;
-        padding: 8px;
-        text-transform: uppercase;
-        text-decoration: none;
-        font-weight: 500;
-        background: rgb(3,155,229);
-        color: white;
-        border: 1px solid rgb(3,155,229);
-        border-radius: 3px;
-        font-size: 14px;
-        box-shadow: 0 2px 5px 0 rgba(0,0,0,.26);
-      }
-    </style>
-  </head>
-  <body>
-    <div id="message">
-      <h1>Welcome to Firebase Hosting</h1>
-      <p>You're seeing this because you've successfully setup Firebase Hosting. Now it's time to go build something extraordinary!</p>
-      <ul>
-        <li><a target="_blank" href="https://firebase.google.com/docs/hosting/">Open Hosting Documentation</a></li>
-      </ul>
-    </div>
-  </body>
-</html>
+</script>
